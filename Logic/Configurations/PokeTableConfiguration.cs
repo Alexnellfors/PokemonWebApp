@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using Poke_Connector.Models;
+using Poke_Connector.Models.Dtos;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,9 +9,9 @@ using System.Threading.Tasks;
 
 namespace Logic.Configurations
 {
-    public class PokeTableConfiguration : IEntityTypeConfiguration<PokemonDto>
+    public class PokeTableConfiguration : IEntityTypeConfiguration<PokemonDbDto>
     {
-        public void Configure(EntityTypeBuilder<PokemonDto> builder)
+        public void Configure(EntityTypeBuilder<PokemonDbDto> builder)
         {
             builder.ToTable("Pokemons", "dbo");
             builder.HasKey(a => a.Name);

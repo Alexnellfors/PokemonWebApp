@@ -1,26 +1,17 @@
 using Logic.Services;
+using Logic.Translators;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using PartyKing.Pages;
 using Poke_Connector.Models;
+using Poke_Connector.Models.Dtos;
 using System.Runtime.CompilerServices;
 
-public class IndexModel : PageModel
+public class IndexModel : AddPageModel
 {
-    private readonly LogicService _service;
-    private readonly DatabaseService _databaseService;
-    private readonly IConfiguration _configuration;
-    public IndexModel(LogicService service, DatabaseService databaseService, IConfiguration configuration)
+    public IndexModel(LogicService service, DatabaseService databaseService, IConfiguration configuration) : base(service, databaseService, configuration)
     {
-        _service = service;
-        _databaseService = databaseService;
-        _configuration = configuration;
     }
-    public List<PokemonDto>? Pokemons { get; private set; }
-    public PokemonDto? Pokemon { get; private set; }
-    public bool AlreadyExists { get; private set; }
-    public string CatchDate { get; private set; }
-
-
 
     public async Task<IActionResult?> OnPostFetchAllAsync()
     {
@@ -28,10 +19,15 @@ public class IndexModel : PageModel
 
         if (all != null)
         {
-            Pokemons = all;
+            var pokemons = PokemonTranslator.FromPokeDbToApi(all);
+            Pokemons = pokemons;
             return Page();
         }
         return null;
+    }
+    public async Task<IActionResult?> OnPostFetchDetailsAsync(int pokemonId)
+    {
+        return RedirectToPage("Details", new {id = pokemonId });
     }
     public async Task<IActionResult?> OnPostCatchPokemonAsync()
     {
@@ -61,19 +57,13 @@ public class IndexModel : PageModel
     {
         try
         {
-            //Not an ideal solution but had problem with deserialization so for now we fetch image url via config + id
-            var imageUrl = _configuration["Pokemon:Other_Dreamworld_Front_Default"];
-            var fullUrl = imageUrl + pokemonId + ".svg";
-
-            var pokemon = new PokemonDto
+            var pokemon = new PokemonDbDto
             {
                 Name = pokemonName,
                 Id = pokemonId,
                 DateTime = pokemonDateTime,
-                Image = fullUrl
+                Image = pokemonUrl
             };
-
-
 
             //Add to pokéIndex
             await _databaseService.AddToDatabase(pokemon);

@@ -28,15 +28,17 @@
     <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-6 mt-6 px-6">
         @foreach (var p in Model.Pokemons)
         {
-            //TODO: make the cards "clickable" so we can fetch additional information via api.'
-            <div class="bg-white/80 rounded-xl shadow-md hover:scale-105 hover:shadow-xl transition p-4 flex flex-col items-center">
-                <img src="@p.Image"
-                     alt="@p.Name"
-                     class="w-24 h-24 object-contain drop-shadow-lg mb-2" />
-                <span class="text-gray-800 font-semibold capitalize">
-                    @p.Name
-                </span>
-            </div>
+            <form method="post" asp-page-handler="FetchDetails" class="bg-white/80 rounded-xl shadow-md hover:scale-105 hover:shadow-xl transition">
+                <input type="hidden" name="pokemonId" value="@p.Id" />
+                <button type="submit" class="p-4 flex flex-col items-center w-full h-full cursor-pointer">
+                    <img src="@p.Image"
+                        alt="@p.Name"
+                        class="w-24 h-24 object-contain drop-shadow-lg mb-2" />
+                    <span class="text-gray-800 font-semibold capitalize">
+                        @p.Name
+                    </span>
+                </button>
+            </form>
         }
     </div>
 }
@@ -68,7 +70,7 @@
         <div class="flex justify-center gap-4 mt-6">
             <form method="post" asp-page-handler="AddToIndex">
                 <input type="hidden" name="pokemonName" value="@Model.Pokemon.Name" />
-                <input type="hidden" name="pokemonUrl" value="https://pokeapi.co/api/v2/pokemon/@Model.Pokemon.Id" />
+                <input type="hidden" name="pokemonUrl" value="@Model.Pokemon.Sprites.Other.DreamWorld.FrontDefault" />
                 <input type="hidden" name="pokemonDateTime" value="@Model.CatchDate" />
                 <input type="hidden" name="pokemonId" value="@Model.Pokemon.Id" />
                 <button type="submit"

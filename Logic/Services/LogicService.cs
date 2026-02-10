@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Configuration;
+﻿using Logic.Translators;
+using Microsoft.Extensions.Configuration;
 using Poke_Connector.Models;
 using Poke_Connector.Services;
 using System;
@@ -19,17 +20,7 @@ namespace Logic.Services
             _pokeService = pokeService;
             _configuration = configuration;
         }
-        public async Task<PokemonDto?> GetPokeAsync(int id)
-        {
-            var pokemon = await _pokeService.GetPokeAsync(id);
-
-            if (pokemon == null)
-            {
-                return null;
-            }
-            return pokemon;
-        }
-        public async Task<PokemonDto?> GetRandomPokeAsync()
+        public async Task<PokemonModel?> GetRandomPokeAsync()
         {
             int maxPokeIds = 0;
 
@@ -52,14 +43,62 @@ namespace Logic.Services
             var random = new Random();
             int randomId = random.Next(1, maxPokeIds + 1);
 
-            PokemonDto? pokemon = new PokemonDto();
-            pokemon = await _pokeService.GetPokeAsync(randomId);
-
-            if (pokemon == null)
+            try
             {
-                return null;
+                PokemonModel? pokemon = new PokemonModel();
+                pokemon = await _pokeService.GetPokeAsync(randomId);
+
+                if (pokemon == null)
+                {
+                    return null;
+                }
+
+                return pokemon;
             }
-            return pokemon;
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error fetching random pokemon: {ex.Message}");
+                throw;
+            }
+        }
+        public async Task<PokemonModel?> GetSpecificPokeAsync(int id)
+        {
+            try
+            {
+                PokemonModel? pokemon = new PokemonModel();
+                pokemon = await _pokeService.GetPokeAsync(id);
+
+                if (pokemon == null)
+                {
+                    return null;
+                }
+                return pokemon;
+
+            }
+            catch(Exception ex)
+            {
+                Console.WriteLine($"Error fetching pokemon {id}: {ex.Message}");
+                throw;
+            }
+        }
+        public async Task<AbilitiesModel?> GetAbilityFromPoke(string name)
+        {
+            try
+            {
+                var ability = await _pokeService.GetAbilityAsync(name);
+
+                if (ability == null)
+                {
+                    return null;
+                }
+                return ability;
+            }
+
+            catch(Exception ex)
+            {
+                Console.WriteLine($"Error fetching ability {name}: {ex.Message}");
+                throw;
+            }
         }
     }
 }

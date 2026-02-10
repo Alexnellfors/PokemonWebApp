@@ -1,4 +1,5 @@
-﻿using Poke_Connector.Models;
+﻿
+using Poke_Connector.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,9 +16,14 @@ namespace Poke_Connector.Services
         {
 
         }
-        public async Task<PokemonDto?> GetPokeAsync(int id)
+        public async Task<PokemonModel?> GetPokeAsync(int id)
         {
-            var result = await GetAsync<PokemonDto>($"pokemon/{id}");
+            var result = await GetAsync<PokemonModel>($"pokemon/{id}");
+            return result;
+        }
+        public async Task<AbilitiesModel> GetAbilityAsync(string name)
+        {
+            var result = await GetAsync<AbilitiesModel>($"ability/{name}");
             return result;
         }
     }
