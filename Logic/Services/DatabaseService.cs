@@ -1,6 +1,6 @@
 ﻿using Logic.DatabaseContexts;
 using Microsoft.EntityFrameworkCore;
-using Poke_Connector.Models;
+using Poke_Connector.Models.Dtos;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -16,7 +16,7 @@ namespace Logic.Services
         {
             _dbContext = dbContext;
         }
-        public async Task AddToDatabase(PokemonDto poke)
+        public async Task AddToDatabase(PokemonDbDto poke)
         {
             try
             {
@@ -28,7 +28,7 @@ namespace Logic.Services
                 Console.WriteLine($"Error adding to database: {ex.Message}");
             }       
         }
-        public async Task<List<PokemonDto>> FetchFromDatabase()
+        public async Task<List<PokemonDbDto>> FetchFromDatabase()
         {
             try
             {
@@ -41,7 +41,7 @@ namespace Logic.Services
                 return null;
             }
         }
-        public async Task<List<PokemonDto>?> GetPokemonsByNameAsync(string name)
+        public async Task<List<PokemonDbDto>?> GetPokemonsByNameAsync(string name)
         {
             try
             {
